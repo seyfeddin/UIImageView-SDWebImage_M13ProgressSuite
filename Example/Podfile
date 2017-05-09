@@ -3,6 +3,7 @@ platform :ios, '7.0'
 
 target "Demo" do
   pod "UIImageView+SDWebImage_M13ProgressSuite", :path => "../"
+  pod "Masonry"
 end
 
 # Uncomment the following lines to add testing dependencies

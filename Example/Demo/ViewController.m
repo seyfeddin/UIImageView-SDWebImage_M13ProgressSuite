@@ -33,7 +33,7 @@
 -(IBAction)clearImage:(id)sender
 {
     [SDWebImageManager.sharedManager.imageCache clearMemory];
-    [SDWebImageManager.sharedManager.imageCache clearDisk];
+    [SDWebImageManager.sharedManager.imageCache clearDiskOnCompletion:nil];
 }
 
 @end

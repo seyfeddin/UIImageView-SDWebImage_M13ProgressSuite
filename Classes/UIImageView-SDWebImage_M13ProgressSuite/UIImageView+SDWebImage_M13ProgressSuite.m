@@ -81,7 +81,7 @@
 }
 
 #pragma mark- Public Methods
-- (void)setImageUsingProgressViewRingWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletionBlock)completedBlock ProgressPrimaryColor:(UIColor *)pColor ProgressSecondaryColor:(UIColor *)sColor Diameter:(float)diameter
+- (void)setImageUsingProgressViewRingWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageDownloaderCompletedBlock)completedBlock ProgressPrimaryColor:(UIColor *)pColor ProgressSecondaryColor:(UIColor *)sColor Diameter:(float)diameter
 {
     [self addProgressViewRingWithPrimaryColor:pColor SecondaryColor:sColor Diameter:diameter];
     
@@ -89,37 +89,37 @@
     [self sd_setImageWithURL:url
             placeholderImage:placeholder
                      options:options
-                    progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                    progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL *url) {
         CGFloat progress = ((CGFloat)receivedSize / (CGFloat)expectedSize);
         [weakSelf updateProgressViewRing:progress];
         if (progressBlock) {
-            progressBlock(receivedSize, expectedSize);
+            progressBlock(receivedSize, expectedSize, nil);
         }
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         [weakSelf removeProgressViewRing];
         if (completedBlock) {
-            completedBlock(image, error, cacheType, imageURL);
+            completedBlock(image, nil, error, YES);
         }
     }];
 }
 
-- (void)setImageUsingProgressViewRingToSuperviewWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletionBlock)completedBlock ProgressPrimaryColor:(UIColor *)pColor ProgressSecondaryColor:(UIColor *)sColor Diameter:(float)diameter {
+- (void)setImageUsingProgressViewRingToSuperviewWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageDownloaderCompletedBlock)completedBlock ProgressPrimaryColor:(UIColor *)pColor ProgressSecondaryColor:(UIColor *)sColor Diameter:(float)diameter {
     [self addProgressViewRingToSuperViewWithPrimaryColor:pColor SecondaryColor:sColor Diameter:diameter];
     
     __weak typeof(self) weakSelf = self;
     [self sd_setImageWithURL:url
             placeholderImage:placeholder
                      options:options
-                    progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                    progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL *url) {
                         CGFloat progress = ((CGFloat)receivedSize / (CGFloat)expectedSize);
                         [weakSelf updateProgressViewRingFromSuperview:progress];
                         if (progressBlock) {
-                            progressBlock(receivedSize, expectedSize);
+                            progressBlock(receivedSize, expectedSize, nil);
                         }
                     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                         [weakSelf removeProgressViewRingFromSuperview];
                         if (completedBlock) {
-                            completedBlock(image, error, cacheType, imageURL);
+                            completedBlock(image, nil, error, YES);
                         }
                     }];
 }
